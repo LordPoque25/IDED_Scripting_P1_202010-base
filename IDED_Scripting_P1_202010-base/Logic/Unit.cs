@@ -1,6 +1,6 @@
 ﻿namespace IDED_Scripting_P1_202010_base.Logic
 {
-    public class Unit
+    public class Unit : EUnitClass
     {
         public int BaseAtk { get; protected set; }
         public int BaseDef { get; protected set; }
@@ -28,15 +28,69 @@
             BaseDef = _def;
             BaseSpd = _spd;
             MoveRange = _moveRange;
+
+            switch (UnitClass)
+            {
+                case EUnitClass.Imp:
+                    BaseAtk = 125;
+                    BaseDef = 125;
+                    BaseSpd = 100;
+                    MoveRange = _moveRange;
+                    break;
+
+                case EUnitClass.Orc:
+                    BaseAtk = 150;
+                    BaseDef = 150;
+                    BaseSpd = 100;
+                    MoveRange = _moveRange;
+                    break;
+
+                case EUnitClass.Villager:
+                    BaseAtk = 255;
+                    BaseDef = 100;
+                    BaseSpd = 100;
+                    MoveRange = _moveRange;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
-        public virtual bool Interact(Unit otherUnit)
+
+    public virtual bool Interact(Unit otherUnit)
         {
-            return false;
+            bool PropInteraction = false;
+            bool atkInteraction = false;
+
+            if (UnitClass == EUnitClass.Villager)
+            {
+                PropInteraction = true;
+            }
+            return PropInteraction;
+
+            if (UnitClass == EUnitClass.Squire)
+            {
+
+            }
         }
 
         public virtual bool Interact(Prop prop) => false;
 
-        public bool Move(Position targetPosition) => false;
+        public bool Move(Position targetPosition)
+        {
+            bool canMove = false;
+            if (targetPosition -= CurrentPosition < MoveRange)
+            {
+                CurrentPosition == targetPosition;
+                canMove = true;
+            }
+            else
+            {
+                CurrentPosition == CurrentPosition;
+                canMove = false;
+            }
+            return canMove;
+        }
     }
 }
