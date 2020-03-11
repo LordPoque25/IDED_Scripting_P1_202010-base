@@ -2,78 +2,160 @@
 {
     public class Human : Unit
     {
-        public float Potential { get; set; }        
+        public float Potential { get; set; }
 
-    public Human(EUnitClass _unitClass, int _atk, int _def, int _spd, int _moveRange, float _potential)
-            : base(_unitClass, _atk, _def, _spd, _moveRange)
+        public Human(EUnitClass _unitClass, float _potential)
+            : base(_unitClass)
         {
+
+            Potential = _potential;
+
+            switch (_unitClass)
+            {
+                case EUnitClass.Villager:
+                    Defense = Defense + (Defense * 0.03f);
+                    UnitClass = EUnitClass.Villager;
+                    break;
+                case EUnitClass.Squire:
+                    Attack = Attack + (Attack * 0.04f);
+                    Defense = Defense + (Defense * 0.04f);
+                    UnitClass = EUnitClass.Squire;
+                    break;
+                case EUnitClass.Soldier:
+                    Attack = Attack + (Attack * 0.05f);
+                    Defense = Defense + (Defense * 0.05f);
+                    UnitClass = EUnitClass.Soldier;
+                    break;
+                case EUnitClass.Ranger:
+                    UnitClass = EUnitClass.Ranger;
+                    Attack = Attack + (Attack * 0.04f);
+                    Defense = Defense + (Defense * 0.04f);
+                    break;
+                case EUnitClass.Mage:
+                    Attack = Attack + (Attack * 0.05f);
+                    Defense = Defense + (Defense * 0.05f);
+                    UnitClass = EUnitClass.Mage;
+                    break;
+                default:
+                    UnitClass = EUnitClass.Villager;
+                    Defense = Defense + (Defense * 0.03f);
+                    break;                
+            }
+
+        }
+
+        public virtual bool ChangeClass(EUnitClass newClass)
+        {
+
+            bool Change = false;
+            
+            switch (UnitClass)
+            {                                              
+                case EUnitClass.Squire:
+                    if (newClass == EUnitClass.Soldier)
+                    {
+                        UnitClass = newClass;
+                        Change = true;
+                    }
+                    break;
+                case EUnitClass.Soldier:
+                    if (newClass == EUnitClass.Squire)
+                    {
+                        UnitClass = newClass;
+                        Change = true;
+                    }
+                    break;
+                case EUnitClass.Ranger:
+                    if (newClass == EUnitClass.Mage)
+                    {
+                        UnitClass = newClass;
+                        Change = true;
+                    }
+                    break;
+                case EUnitClass.Mage:
+                    if (newClass == EUnitClass.Ranger)
+                    {
+                        UnitClass = newClass;
+                        Change = true;
+                    }
+                    break;
+                default:
+                    Change = false;
+                    break;                    
+            }
+
+            return Change;
+        }
+
+        public override bool Interact(Unit otherUnit)
+        {
+            bool CanInteract = false;
+
             switch (UnitClass)
             {
                 case EUnitClass.Villager:
-                    BaseAtk = 0;
-                    BaseDef = 0;
-                    BaseSpd = 100;
-                    MoveRange = _moveRange;                    
+                    CanInteract = false;
                     break;
-
                 case EUnitClass.Squire:
-                    BaseAtk = 150;
-                    BaseDef = 150;
-                    BaseSpd = 100;
-                    MoveRange = _moveRange;
+                    if (otherUnit.UnitClass != EUnitClass.Squire)
+                    {
+                        CanInteract = true;
+                    }
                     break;
-
-                case EUnitClass.Soilder:
-                    BaseAtk = 200;
-                    BaseDef = 200;
-                    BaseSpd = 100;
-                    MoveRange = _moveRange;
+                case EUnitClass.Soldier:
+                    if (otherUnit.UnitClass != EUnitClass.Soldier)
+                    {
+                        CanInteract = true;
+                    }
                     break;
-
                 case EUnitClass.Ranger:
-                    BaseAtk = 100;
-                    BaseDef = 100;
-                    BaseSpd = 200;
-                    MoveRange = _moveRange;
+                    if (otherUnit.UnitClass != EUnitClass.Dragon || otherUnit.UnitClass != EUnitClass.Mage)
+                    {
+                        CanInteract = true;
+                    }
                     break;
-
                 case EUnitClass.Mage:
-                    BaseAtk = 225;
-                    BaseDef = 100;
-                    BaseSpd = 150;
-                    MoveRange = _moveRange;
+                    if (otherUnit.UnitClass != EUnitClass.Mage)
+                    {
+                        CanInteract = true;
+                    }
                     break;
-
-                default:
-                    _unitClass = EUnitClass.Villager;
+                case EUnitClass.Imp:
+                    if (otherUnit.UnitClass != EUnitClass.Dragon)
+                    {
+                        CanInteract = true;
+                    }
                     break;
-
+                case EUnitClass.Orc:
+                    { 
+                    if (otherUnit.UnitClass != EUnitClass.Dragon)
+                        CanInteract = true;
+                    }
+                    break;
+                case EUnitClass.Dragon:
+                    CanInteract = true;
+                    break;              
             }
+
+            return CanInteract;
         }
 
-        
-
-    public virtual bool ChangeClass(EUnitClass newClass)
+        public override bool Interact(Prop prop)
         {
-            bool canChange = false;            
+            bool CanInteract;
 
-            if (EUnitClass.Ranger == UnitClass.Mage)
+            if (UnitClass == EUnitClass.Villager)
             {
-                canChange = true;
+                CanInteract = true;
             }
-            else if (EUnitClass.Mage == UnitClass.Ranger)
+            else
             {
-                canChange = true;
+                CanInteract = false;
             }
-            else if (EUnitClass.Squire == UnitClass.Soilder)
-            {
-                canChange = true;
-            }
-            else if (EUnitClass.Soilder == UnitClass.Squire)
-            {
-                canChange = true;
-            }
-            return false;
+
+            return CanInteract;
         }
+
+
     }
 }
